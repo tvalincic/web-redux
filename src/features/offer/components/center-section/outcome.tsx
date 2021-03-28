@@ -1,7 +1,8 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectOutcomeById } from "../../state/selectors";
 import { RootState } from "../../../../app/store";
+import { toggleOutcome } from "../../../betslip";
 import classnames from "classnames";
 
 interface IOutcomeProps {
@@ -14,12 +15,17 @@ export const Outcome = ({ id }: IOutcomeProps) => {
   const outcome = useSelector((state: RootState) =>
     selectOutcomeById(state, id || "")
   );
+  const dispatch = useDispatch();
   if (!outcome) return <EmptyOutcome />;
+  const clickHandler = () => {
+    dispatch(toggleOutcome(outcome.id));
+  };
   return (
     <div
       className={classnames("fixture-outcome selectable", {
         selected: !!outcome.selected,
       })}
+      onClick={clickHandler}
     >
       {outcome.odds}
     </div>

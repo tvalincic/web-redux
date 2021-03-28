@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import { offerReducer, handleDiffMiddleware } from "../features/offer";
+import { betSlipReducer } from "../features/betslip";
 
 export const store = configureStore({
   reducer: {
     offer: offerReducer,
+    betSlip: betSlipReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

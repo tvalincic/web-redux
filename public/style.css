@@ -1,0 +1,273 @@
+.app {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: auto 250px;
+  grid-gap: 20px;
+  background-color: #e1e7eb;
+  align-items: start;
+}
+
+.betslip {
+  background-color: #fff;
+  position: sticky;
+  top: 5px;
+}
+
+.betslip-header {
+  background-color: #2d373e;
+  font-size: 13px;
+  color: #fff;
+  padding: 7px;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.outcome {
+  padding: 4px 8px;
+  line-height: 17px;
+  font-size: 12px;
+  border-top: 1px solid rgba(197, 207, 214, 0.6);
+}
+
+.outcome-header {
+  font-weight: bold;
+}
+
+.betslip-footer {
+  background-color: #3a444d;
+  color: #fff;
+  padding: 8px;
+  font-size: 12px;
+}
+
+.footer-data {
+  display: grid;
+  grid-template-columns: repeat(2, 50%);
+  margin: 6px 0px;
+}
+
+.betslip-data:last-child {
+  text-align: right;
+}
+
+.betslip-data.selections {
+  font-weight: bold;
+}
+
+.betslip-data.accumulated-outcome {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.betslip-data.payout-text {
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.betslip-data.payout {
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.outcome-footer {
+  display: grid;
+  grid-template-columns: repeat(2, 50%);
+  color: #636f78;
+}
+
+.mt {
+  text-align: right;
+  line-height: 28px;
+  color: #b2b2b2;
+}
+
+.input-stake {
+  display: block;
+  text-align: right;
+  box-sizing: border-box;
+  width: 100%;
+  line-height: 20px;
+  border: 1px solid white;
+  padding: 4px 5px 4px 5px;
+  border-radius: 3px;
+  font-size: 14px;
+  outline: 0;
+}
+
+.footer-right {
+  text-align: right;
+}
+
+.outcome-footer span.type {
+  padding: 0 5px;
+  border: 1px solid #c5cfd6;
+  border-radius: 3px;
+  background-color: rgba(255, 255, 255, 0.6);
+  margin-right: 5px;
+}
+
+.outcome-footer span.price,
+.outcome-footer span.type {
+  vertical-align: middle;
+}
+
+.offer {
+  display: grid;
+  grid-template-columns: 200px auto;
+  grid-gap: 20px;
+}
+
+.sport-tab,
+.tournament {
+  cursor: pointer;
+}
+
+.sport-tab {
+  text-transform: uppercase;
+  background-color: #2d373e;
+  line-height: 36px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #fff;
+  padding: 0px 10px;
+  border-top: 1px solid #c5cfd6;
+  border-bottom: 1px solid #c5cfd6;
+}
+
+.sport-tab:hover {
+  background-color: #36414a;
+}
+
+.tournament {
+  font-weight: 400;
+  font-size: smaller;
+  background: #fff;
+  border-bottom: 1px solid #c5cfd6;
+  padding: 3px 5px;
+}
+
+.tournament:hover {
+  background: #f2f2f2;
+}
+
+.tournament:last-child {
+  border-bottom: 0px;
+}
+
+.sport-tab.active,
+.tournament.active {
+  font-weight: bold;
+}
+
+.sport-tab.active {
+  position: sticky;
+  top: 0;
+}
+
+.tournament-content {
+  background: #fff;
+  margin-bottom: 10px;
+}
+
+.tournament-heading {
+  background: #ad101a;
+  color: #fff;
+  padding: 5px 10px;
+  font-weight: bold;
+}
+
+.tournament-header {
+  display: grid;
+  grid-template-columns: auto repeat(3, 50px);
+}
+
+.tournament-header .outcome-type {
+  text-align: center;
+  color: black;
+  height: 20px;
+  line-height: 20px;
+  font-size: 12px;
+  border-bottom: 1px solid #dce2e6;
+}
+
+.fixture-grid {
+  display: grid;
+  grid-template-columns: auto 150px;
+  border-bottom: 1px solid #c5cfd6;
+  align-items: center;
+  padding-left: 8px;
+}
+
+.line-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.fixture-outcome {
+  background-color: #f0f1f3;
+  color: black;
+  position: relative;
+  height: 28px;
+  line-height: 28px;
+  font-size: 12px;
+  text-align: center;
+  border-right: 1px solid #dce2e6;
+}
+
+.fixture-outcome.selected {
+  background-color: #ad101a;
+  color: #fff;
+}
+
+.fixture-outcome .ticker {
+  position: absolute;
+  right: 2px;
+  animation: hideTrend linear 0s forwards;
+  animation-delay: 4s;
+  animation-iteration-count: 1;
+  opacity: 1;
+  border-left: 4px solid rgba(0, 0, 0, 0);
+}
+
+.fixture-outcome .ticker.up {
+  top: 2px;
+  border-top: 4px solid #00a100;
+  border-right: 4px solid #00a100;
+  border-bottom: 4px solid rgba(0, 0, 0, 0);
+}
+
+.fixture-outcome .ticker.down {
+  bottom: 2px;
+  border-top: 4px solid rgba(0, 0, 0, 0);
+  border-right: 4px solid #ad101a;
+  border-bottom: 4px solid #ad101a;
+}
+
+.fixture-outcome.selectable {
+  cursor: pointer;
+}
+
+.fixture-outcome.selectable:not(.selected):hover {
+  background-color: #e2e4e8;
+}
+
+.fixture-outcome:first-child {
+  border-left: 1px solid #dce2e6;
+}
+
+.fixture-type {
+  text-align: center;
+  padding: 2px;
+}
+
+@keyframes hideTrend {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

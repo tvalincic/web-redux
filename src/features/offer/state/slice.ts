@@ -17,6 +17,7 @@ import {
   IOutcome,
   IScore,
 } from "./model";
+import { toggleOutcome } from "../../betslip";
 
 export const sportsAdapter = createEntityAdapter<ISport>();
 export const categoriesAdapter = createEntityAdapter<ICategory>();
@@ -108,6 +109,19 @@ const offerSlice = createSlice({
       outcomesAdapter.upsertMany(state.outcomes, payload.outcomes);
       scoresAdapter.upsertMany(state.scores, payload.scores);
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(toggleOutcome.fulfilled, (state, action) => {
+      const { newOutcome, removed = [] } = action.payload;
+      if (newOutcome) {
+        const outcome = state.outcomes.entities[newOutcome.id];
+        if (outcome) outcome.selected = true;
+      }
+      removed.forEach((id) => {
+        const outcome = state.outcomes.entities[id];
+        if (outcome) outcome.selected = false;
+      });
+    });
   },
 });
 
