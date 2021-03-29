@@ -1,9 +1,6 @@
-import { Middleware, Dispatch, MiddlewareAPI, AnyAction } from "redux";
+import { Middleware } from "redux";
 import { handleDiff } from "./slice";
-import { IDiff, ISbkResponse } from "./model";
-import { RootState } from "../../../app/store";
 import { structure } from "./structure";
-import { PayloadAction, Action } from "@reduxjs/toolkit";
 import { syncSlipAfterDiff } from "../../betslip/state/actions";
 
 export const handleDiffMiddleware: Middleware = (storeApi) => (next) => (
