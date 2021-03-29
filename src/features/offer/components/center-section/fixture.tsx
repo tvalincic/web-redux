@@ -18,7 +18,7 @@ export const Fixture = ({ id }: IFixtureProps) => {
   const mainMarket = useSelector((state: RootState) =>
     selectMainFixtureMarketId(state, id)
   );
-  if (!fixture) return null;
+  if (!fixture || !mainMarket) return null;
   return (
     <div className="fixture-grid fixture" key={fixture.id}>
       <div className="fixture-title">

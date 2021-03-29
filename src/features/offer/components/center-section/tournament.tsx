@@ -18,7 +18,7 @@ export const Tournament = ({ id }: ITournamentProps) => {
   const fixtures = useSelector((state: RootState) =>
     selectTournamentFixtureIds(state, id)
   );
-  if (!tournament) return null;
+  if (!tournament || !fixtures.length) return null;
   return (
     <section className="tournament-content">
       <div className="tournament-heading">{tournament.name}</div>
