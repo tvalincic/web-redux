@@ -22,14 +22,12 @@ import {
   ILine,
   IOutcome,
   IScore,
-  ISbkConstruct,
   ISbkSport,
   ISbkCategory,
   ISbkFixture,
   ISbkRound,
   ISbkSeason,
   ISbkTournament,
-  IStateElement,
   ISbkOffer,
   ISbkOutcome,
   ISbkLine,
@@ -37,9 +35,13 @@ import {
   ISbkScore,
 } from "../model";
 import { stateEntity } from "../model";
-import { createId } from "../util";
 import { IOfferState } from "../slice";
-import { filterOutFalsy, IMap } from "../../../../app/util";
+import { IMap } from "../../../../app/util";
+import {
+  IStructuredSports,
+  IStructuredOffers,
+  IStructuredScores,
+} from "./model";
 import {
   sportCategories,
   categoryTournaments,
@@ -50,40 +52,8 @@ import {
   marketLines,
   lineOutcomes,
 } from "./selectors";
-
-interface IStructuredSports {
-  sports: ISport[];
-  suspendedSports: string[];
-  categories: ICategory[];
-  suspendedCategories: string[];
-  tournaments: ITournament[];
-  suspendedTournaments: string[];
-  seasons: ISeason[];
-  suspendedSeasons: string[];
-  rounds: IRound[];
-  suspendedRounds: string[];
-  fixtures: IMap<IFixture>;
-  suspendedFixtures: string[];
-}
-
-interface IStructuredOffers {
-  offers: IOffer[];
-  suspendedOffers: string[];
-  markets: IMarket[];
-  suspendedMarkets: string[];
-  lines: ILine[];
-  suspendedLines: string[];
-  outcomes: IOutcome[];
-  suspendedOutcomes: string[];
-}
-
-interface IStructuredScores {
-  scores: IScore[];
-  suspendedScores: string[];
-}
-
-const filterDuplicates = (a: string[], b: string[]) =>
-  Array.from(new Set([...a, ...b]));
+import { suspend } from "./suspend";
+import { create } from "./create";
 
 export function structure(data: ISbkResponse, state: IOfferState) {
   const { full, diff } = data;
@@ -97,64 +67,13 @@ export function structure(data: ISbkResponse, state: IOfferState) {
     ...constructedSports.fixtures,
   };
   const constructedOffers = constructOffers(offersSbk, mergedFixtures, state);
-  const constructedScores = constructScores(scoresSbk, mergedFixtures);
+  const constructedScores = constructScores(scoresSbk, mergedFixtures, state);
   return {
     ...constructedSports,
     ...constructedOffers,
     fixtures: Object.values(constructedSports.fixtures),
     ...constructedScores,
   };
-}
-
-interface ICreate<T, V> {
-  sbkEntity: ISbkConstruct;
-  data: IMap<V> | V[];
-  stateKey: stateEntity;
-  createEntity: (
-    partialEntity: T & ReturnType<typeof createPartialEntity>
-  ) => V | null;
-  suspendedArray: string[];
-  idCreator?: (id: string) => string;
-  parentId?: string;
-  childCreator?: (entity: T, id: string) => string[];
-  mergeChildren?: (entity: V, ids: string[]) => void;
-}
-
-function createPartialEntity<T>(entity: T, id: string, key: string) {
-  return { ...entity, id, key };
-}
-
-function create<T, V extends IStateElement>({
-  sbkEntity,
-  data,
-  stateKey,
-  createEntity,
-  childCreator,
-  idCreator,
-  parentId,
-  suspendedArray,
-  mergeChildren,
-}: ICreate<T, V>) {
-  return Object.entries(sbkEntity)
-    .map(([key, entity]) => {
-      const id = idCreator ? idCreator(key) : createId(stateKey, key, parentId);
-      if (!entity) {
-        suspendedArray.push(id);
-        return id;
-      }
-      const partialEntity = createPartialEntity<T>(entity, id, key);
-      const newEntity = createEntity(partialEntity);
-      const childIds = childCreator?.(entity, id) || [];
-      if (!newEntity) return null;
-      mergeChildren?.(newEntity, childIds);
-      if (Array.isArray(data)) {
-        data.push(newEntity);
-      } else if (typeof data === "object") {
-        data[id] = newEntity;
-      }
-      return id;
-    })
-    .filter(filterOutFalsy);
 }
 
 function constructSports(sports: ISbkSports | undefined, state: IOfferState) {
@@ -178,7 +97,7 @@ function constructSports(sports: ISbkSports | undefined, state: IOfferState) {
     sbkEntity: sports,
     data: data.sports,
     stateKey: stateEntity.sport,
-    suspendedArray: data.suspendedSports,
+    onSuspend: (id) => suspend(id, state, data).sport(),
     createEntity(sport) {
       return {
         ...sport,
@@ -188,8 +107,8 @@ function constructSports(sports: ISbkSports | undefined, state: IOfferState) {
     childCreator(sport, id) {
       return constructCategories(sport.categories, id, data, state);
     },
-    mergeChildren(sport, ids) {
-      sport.categories = filterDuplicates(sport.categories, ids);
+    mergeChildren(sport, cb) {
+      sport.categories = cb(sport.categories);
     },
   });
   return data;
@@ -206,7 +125,7 @@ function constructCategories(
     data: data.categories,
     stateKey: stateEntity.category,
     parentId: sportId,
-    suspendedArray: data.suspendedCategories,
+    onSuspend: (id) => suspend(id, state, data).sport(),
     createEntity(category) {
       return {
         ...category,
@@ -217,8 +136,8 @@ function constructCategories(
     childCreator(category, id) {
       return constructTournaments(category.tournaments, id, data, state);
     },
-    mergeChildren(category, ids) {
-      category.tournaments = filterDuplicates(category.tournaments, ids);
+    mergeChildren(category, cb) {
+      category.tournaments = cb(category.tournaments);
     },
   });
 }
@@ -234,7 +153,7 @@ function constructTournaments(
     data: data.tournaments,
     stateKey: stateEntity.tournament,
     parentId: categoryId,
-    suspendedArray: data.suspendedTournaments,
+    onSuspend: (id) => suspend(id, state, data).tournament(),
     createEntity(tournament) {
       return {
         ...tournament,
@@ -245,8 +164,8 @@ function constructTournaments(
     childCreator(tournament, id) {
       return constructSeasons(tournament.seasons, id, data, state);
     },
-    mergeChildren(tournament, ids) {
-      tournament.seasons = filterDuplicates(tournament.seasons, ids);
+    mergeChildren(tournament, cb) {
+      tournament.seasons = cb(tournament.seasons);
     },
   });
 }
@@ -262,7 +181,7 @@ function constructSeasons(
     data: data.seasons,
     stateKey: stateEntity.season,
     parentId: tournamentId,
-    suspendedArray: data.suspendedSeasons,
+    onSuspend: (id) => suspend(id, state, data).season(),
     createEntity(season) {
       return {
         ...season,
@@ -273,8 +192,8 @@ function constructSeasons(
     childCreator(season, id) {
       return constructRounds(season.rounds, id, data, state);
     },
-    mergeChildren(season, ids) {
-      season.rounds = filterDuplicates(season.rounds, ids);
+    mergeChildren(season, cb) {
+      season.rounds = cb(season.rounds);
     },
   });
 }
@@ -290,7 +209,7 @@ function constructRounds(
     data: data.rounds,
     stateKey: stateEntity.round,
     parentId: seasonId,
-    suspendedArray: data.suspendedRounds,
+    onSuspend: (id) => suspend(id, state, data).round(),
     createEntity(round) {
       return {
         ...round,
@@ -299,10 +218,10 @@ function constructRounds(
       };
     },
     childCreator(round, id) {
-      return constructFixtures(round.fixtures, id, data);
+      return constructFixtures(round.fixtures, id, data, state);
     },
-    mergeChildren(round, ids) {
-      round.fixtures = filterDuplicates(round.fixtures, ids);
+    mergeChildren(round, cb) {
+      round.fixtures = cb(round.fixtures);
     },
   });
 }
@@ -310,13 +229,14 @@ function constructRounds(
 function constructFixtures(
   fixtures: ISbkFixtures,
   roundId: string,
-  data: IStructuredSports
+  data: IStructuredSports,
+  state: IOfferState
 ) {
   return create<ISbkFixture, IFixture>({
     sbkEntity: fixtures,
     data: data.fixtures,
     stateKey: stateEntity.fixture,
-    suspendedArray: data.suspendedFixtures,
+    onSuspend: (id) => suspend(id, state, data).fixture(),
     idCreator: (id) => `m_${id}`,
     createEntity(fixture) {
       return { ...fixture, round: roundId };
@@ -344,7 +264,7 @@ function constructOffers(
     sbkEntity: offers,
     data: data.offers,
     stateKey: stateEntity.offer,
-    suspendedArray: data.suspendedOffers,
+    onSuspend: (id) => suspend(id, state, data).offer(),
     idCreator: (id) => id,
     createEntity(offer) {
       const fixture = fixtures[offer.id];
@@ -358,8 +278,8 @@ function constructOffers(
     childCreator(offer, id) {
       return constructMarkets(offer.markets, id, data, state);
     },
-    mergeChildren(offer, ids) {
-      offer.markets = filterDuplicates(offer.markets, ids);
+    mergeChildren(offer, cb) {
+      offer.markets = cb(offer.markets);
     },
   });
   return data;
@@ -376,7 +296,7 @@ function constructMarkets(
     data: data.markets,
     stateKey: stateEntity.market,
     parentId: offerId,
-    suspendedArray: data.suspendedMarkets,
+    onSuspend: (id) => suspend(id, state, data).market(),
     createEntity(market) {
       return {
         ...market,
@@ -387,8 +307,8 @@ function constructMarkets(
     childCreator(market, id) {
       return constructLines(market.lines, id, data, state);
     },
-    mergeChildren(market, ids) {
-      market.lines = filterDuplicates(market.lines, ids);
+    mergeChildren(market, cb) {
+      market.lines = cb(market.lines);
     },
   });
 }
@@ -404,7 +324,7 @@ function constructLines(
     data: data.lines,
     stateKey: stateEntity.line,
     parentId: marketId,
-    suspendedArray: data.suspendedLines,
+    onSuspend: (id) => suspend(id, state, data).line(),
     createEntity(line) {
       return {
         ...line,
@@ -413,10 +333,10 @@ function constructLines(
       };
     },
     childCreator(line, id) {
-      return constructOutcomes(line.outcomes, id, data);
+      return constructOutcomes(line.outcomes, id, data, state);
     },
-    mergeChildren(line, ids) {
-      line.outcomes = filterDuplicates(line.outcomes, ids);
+    mergeChildren(line, cb) {
+      line.outcomes = cb(line.outcomes);
     },
   });
 }
@@ -424,14 +344,15 @@ function constructLines(
 function constructOutcomes(
   outcomes: ISbkOutcomes = {},
   lineId: string,
-  data: IStructuredOffers
+  data: IStructuredOffers,
+  state: IOfferState
 ) {
   return create<ISbkOutcome, IOutcome>({
     sbkEntity: outcomes,
     data: data.outcomes,
     stateKey: stateEntity.outcome,
     parentId: lineId,
-    suspendedArray: data.suspendedOutcomes,
+    onSuspend: (id) => suspend(id, state, data).outcome(),
     createEntity(outcome) {
       return { ...outcome, line: lineId };
     },
@@ -440,7 +361,8 @@ function constructOutcomes(
 
 function constructScores(
   scores: ISbkScores | undefined,
-  fixtures: IMap<IFixture | undefined>
+  fixtures: IMap<IFixture | undefined>,
+  state: IOfferState
 ) {
   const data: IStructuredScores = {
     scores: [],
@@ -451,7 +373,7 @@ function constructScores(
     sbkEntity: scores,
     data: data.scores,
     stateKey: stateEntity.score,
-    suspendedArray: data.suspendedScores,
+    onSuspend: (id) => suspend(id, state, data).score(),
     idCreator: (id) => id,
     createEntity(offer) {
       const fixture = fixtures[offer.id];

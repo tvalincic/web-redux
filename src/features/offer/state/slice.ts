@@ -98,16 +98,27 @@ const offerSlice = createSlice({
     handleDiff(state, action: PayloadAction<any>) {
       const { payload } = action;
       sportsAdapter.upsertMany(state.sports, payload.sports);
+      sportsAdapter.removeMany(state.sports, payload.suspendedSports);
       categoriesAdapter.upsertMany(state.categories, payload.categories);
+      categoriesAdapter.removeMany(state.categories, payload.suspendedCategories);
       tournamentsAdapter.upsertMany(state.tournaments, payload.tournaments);
+      tournamentsAdapter.removeMany(state.tournaments, payload.suspendedTournaments);
       seasonsAdapter.upsertMany(state.seasons, payload.seasons);
+      seasonsAdapter.removeMany(state.seasons, payload.suspendedSeasons);
       roundsAdapter.upsertMany(state.rounds, payload.rounds);
+      roundsAdapter.removeMany(state.rounds, payload.suspendedRounds);
       fixturesAdapter.upsertMany(state.fixtures, payload.fixtures);
+      fixturesAdapter.removeMany(state.fixtures, payload.suspendedFixtures);
       offersAdapter.upsertMany(state.offers, payload.offers);
+      offersAdapter.removeMany(state.offers, payload.suspendedOffers);
       marketsAdapter.upsertMany(state.markets, payload.markets);
+      marketsAdapter.removeMany(state.markets, payload.suspendedMarkets);
       linesAdapter.upsertMany(state.lines, payload.lines);
+      linesAdapter.removeMany(state.lines, payload.suspendedLines);
       outcomesAdapter.upsertMany(state.outcomes, payload.outcomes);
+      outcomesAdapter.removeMany(state.outcomes, payload.suspendedOutcomes);
       scoresAdapter.upsertMany(state.scores, payload.scores);
+      scoresAdapter.removeMany(state.scores, payload.suspendedScores);
     },
   },
   extraReducers: (builder) => {
