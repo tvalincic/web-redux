@@ -99,3 +99,20 @@ export const toggleOutcome = createAsyncThunk<
     ...betSlip.getCurrentBetSlip(),
   };
 });
+
+interface IChangedOutcomesPayload {
+  changed: IOutcome[];
+  deleted: string[];
+}
+
+export const syncSlipAfterDiff = createAsyncThunk<
+  ReturnType<typeof betSlip.getCurrentBetSlip>,
+  IChangedOutcomesPayload,
+  {
+    dispatch: AppDispatch;
+    state: RootState;
+  }
+>("slip/syncSlipApi", ({ changed, deleted }, { getState }) => {
+  betSlip.change(changed, deleted, getState().betSlip);
+  return betSlip.getCurrentBetSlip();
+});

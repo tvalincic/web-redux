@@ -1,5 +1,5 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
-import { changeStake } from "./actions";
+import { changeStake, syncSlipAfterDiff } from "./actions";
 import { toggleOutcome } from "./actions";
 import { betSlip } from "./betslip";
 import { IBetSlipOutcome, IBetSlipState } from "./model";
@@ -47,13 +47,13 @@ const betSlipSlice = createSlice({
     builder.addCase(changeStake.rejected, (_, action) => {
       console.error(action);
     });
-    // [syncSlipAfterDiff.fulfilled]: (state, action) => {
-    //   state = { ...state, ...action.payload };
-    //   return state;
-    // },
-    // [syncSlipAfterDiff.rejected]: (_, action) => {
-    //   console.error(action);
-    // },
+    builder.addCase(syncSlipAfterDiff.fulfilled, (state, action) => {
+      state = { ...state, ...action.payload };
+      return state;
+    });
+    builder.addCase(syncSlipAfterDiff.rejected, (state, action) => {
+      console.error(action);
+    });
   },
 });
 

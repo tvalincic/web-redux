@@ -146,11 +146,20 @@ declare module "@minus5/listic.lib" {
     tip: string;
     vrijeme?: string;
   }
+  export interface IChange {
+    tipPromjene: string;
+    izvorId: sourceId;
+    tecajId: string;
+    noviTecajId?: string;
+    noviTecaj?: number;
+    naziv?: string;
+  }
   export interface IBetSlipApi {
     listic: () => IBetSlip;
     add: (odd: IOdd) => IAddOddReturn;
     remove: (sourceId: sourceId, id: string) => IRemoveOddReturn;
     ulog: (stake: number) => boolean;
+    promjene: (data: IChange[]) => boolean;
     porez: IBetSlipTax;
   }
   declare function createBetSlip(): IBetSlipApi;

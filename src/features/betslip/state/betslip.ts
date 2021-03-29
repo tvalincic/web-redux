@@ -1,7 +1,7 @@
-import createBetSlip, { IOddDefinition } from "@minus5/listic.lib";
+import createBetSlip, { IChange } from "@minus5/listic.lib";
 import { joinStrings } from "../../shared";
 import { IOutcome, IFixture, IMarket, ILine } from "../../offer";
-import { IBetSlip } from "./model";
+import { IBetSlip, IBetSlipState } from "./model";
 const betSlipApi = createBetSlip();
 
 const TEMP_SOURCE_ID = 0;
@@ -66,9 +66,43 @@ function changeStake(stake: number) {
   return betSlipApi.ulog(stake);
 }
 
+function generateChange(outcome: IOutcome | string): IChange {
+  if (typeof outcome === "string") {
+    return {
+      izvorId: TEMP_SOURCE_ID,
+      tecajId: outcome,
+      tipPromjene: "nijeUPonudi",
+    };
+  }
+  return {
+    izvorId: TEMP_SOURCE_ID,
+    noviTecaj: outcome.odds,
+    noviTecajId: outcome.id,
+    tecajId: outcome.id,
+    tipPromjene: "tecaj",
+  };
+}
+
+function change(changed: IOutcome[], deleted: string[], state: IBetSlipState) {
+  const changes: IChange[] = [];
+  changed.forEach((change) => {
+    if (state.entities[change.id]) {
+      changes.push(generateChange(change));
+    }
+  });
+  deleted.forEach((id) => {
+    if (state.entities[id]) {
+      changes.push(generateChange(id));
+    }
+  });
+  if (changes.length) betSlipApi.promjene(changes);
+  return !!changes.length;
+}
+
 export const betSlip = {
   add,
   remove,
   getCurrentBetSlip,
   changeStake,
+  change,
 };
