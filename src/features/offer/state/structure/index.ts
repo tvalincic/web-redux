@@ -354,7 +354,9 @@ function constructOutcomes(
     parentId: lineId,
     onSuspend: (id) => suspend(id, state, data).outcome(),
     createEntity(outcome) {
-      return { ...outcome, line: lineId };
+      const stateOutcome = state.outcomes.entities[outcome.id];
+      const trend = stateOutcome ? outcome.odds - stateOutcome.odds : 0;
+      return { ...outcome, line: lineId, trend };
     },
   });
 }

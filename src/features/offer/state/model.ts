@@ -191,6 +191,7 @@ export interface IOutcome extends IIdentity {
   name: string;
   odds: number;
   selected?: boolean;
+  trend?: number;
 }
 
 export interface IScore {

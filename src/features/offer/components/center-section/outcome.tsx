@@ -4,6 +4,7 @@ import { selectOutcomeById } from "../../state/selectors";
 import { RootState } from "../../../../app/store";
 import { toggleOutcome } from "../../../betslip";
 import classnames from "classnames";
+import { Ticker } from "./ticker";
 
 interface IOutcomeProps {
   id: React.ReactText | null;
@@ -28,6 +29,9 @@ export const Outcome = ({ id }: IOutcomeProps) => {
       onClick={clickHandler}
     >
       {outcome.odds}
+      {!!outcome.trend ? (
+        <Ticker trend={outcome.trend} price={outcome.odds} />
+      ) : null}
     </div>
   );
 };
