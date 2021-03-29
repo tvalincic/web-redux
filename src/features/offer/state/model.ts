@@ -7,55 +7,57 @@ export interface ISbkResponse {
   merged: ISbkState | null;
 }
 
+type ISbkEntity<T> = IMap<T | null>;
+
 export interface ISbkState {
   meta?: ISbkMeta;
-  offers?: IMap<ISbkOffer>;
-  scores?: IMap<ISbkScore>;
+  offers?: ISbkOffers;
+  scores?: ISbkScores;
 }
 
-export type ISbkOffers = IMap<ISbkOffer>;
-export type ISbkScores = IMap<ISbkScore>;
+export type ISbkOffers = ISbkEntity<ISbkOffer>;
+export type ISbkScores = ISbkEntity<ISbkScore>;
 
 export interface ISbkMeta {
   sports: ISbkSports;
 }
 
-export type ISbkSports = IMap<ISbkSport>;
+export type ISbkSports = ISbkEntity<ISbkSport>;
 
 export interface ISbkSport {
   name: string;
   categories: ISbkCategories;
 }
 
-export type ISbkCategories = IMap<ISbkCategory>;
+export type ISbkCategories = ISbkEntity<ISbkCategory>;
 
 export interface ISbkCategory {
   name: string;
   tournaments: ISbkTournaments;
 }
 
-export type ISbkTournaments = IMap<ISbkTournament>;
+export type ISbkTournaments = ISbkEntity<ISbkTournament>;
 
 export interface ISbkTournament {
   name: string;
   seasons: ISbkSeasons;
 }
 
-export type ISbkSeasons = IMap<ISbkSeason>;
+export type ISbkSeasons = ISbkEntity<ISbkSeason>;
 
 export interface ISbkSeason {
   name: string;
   rounds: ISbkRounds;
 }
 
-export type ISbkRounds = IMap<ISbkRound>;
+export type ISbkRounds = ISbkEntity<ISbkRound>;
 
 export interface ISbkRound {
   name: string;
   fixtures: ISbkFixtures;
 }
 
-export type ISbkFixtures = IMap<ISbkFixture>;
+export type ISbkFixtures = ISbkEntity<ISbkFixture>;
 
 export interface ISbkFixture {
   away: ICompetitor;
@@ -68,7 +70,7 @@ export interface ISbkOffer {
   stopped: boolean;
 }
 
-export type ISbkMarkets = IMap<ISbkMarket>;
+export type ISbkMarkets = ISbkEntity<ISbkMarket>;
 
 export interface ISbkMarket {
   name: string;
@@ -76,7 +78,7 @@ export interface ISbkMarket {
   lines: ISbkLines;
 }
 
-export type ISbkLines = IMap<ISbkLine>;
+export type ISbkLines = ISbkEntity<ISbkLine>;
 
 export interface ISbkLine {
   name: string;
@@ -85,7 +87,7 @@ export interface ISbkLine {
   outcomes: ISbkOutcomes;
 }
 
-export type ISbkOutcomes = IMap<ISbkOutcome>;
+export type ISbkOutcomes = ISbkEntity<ISbkOutcome>;
 
 export interface ISbkOutcome {
   name: string;
