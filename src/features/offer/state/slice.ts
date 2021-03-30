@@ -95,14 +95,36 @@ const offerSlice = createSlice({
         state.activeFixture = null;
       }
     },
+    changeActiveFixture(state, action: PayloadAction<string>) {
+      const fixture = state.fixtures.entities[action.payload];
+      const round = state.rounds.entities[fixture?.round || ""];
+      const season = state.seasons.entities[round?.season || ""];
+      const tournament = state.tournaments.entities[season?.tournament || ""];
+      const category = state.categories.entities[tournament?.category || ""];
+      const sport = state.sports.entities[category?.sport || ""];
+      if (fixture) {
+        state.activeSport = sport?.id || null;
+        state.activeCategory = category?.id || null;
+        state.activeTournament = tournament?.id || null;
+        state.activeSeason = season?.id || null;
+        state.activeRound = round?.id || null;
+        state.activeFixture = fixture.id;
+      }
+    },
     handleDiff(state, action: PayloadAction<any>) {
       const { payload } = action;
       sportsAdapter.upsertMany(state.sports, payload.sports);
       sportsAdapter.removeMany(state.sports, payload.suspendedSports);
       categoriesAdapter.upsertMany(state.categories, payload.categories);
-      categoriesAdapter.removeMany(state.categories, payload.suspendedCategories);
+      categoriesAdapter.removeMany(
+        state.categories,
+        payload.suspendedCategories
+      );
       tournamentsAdapter.upsertMany(state.tournaments, payload.tournaments);
-      tournamentsAdapter.removeMany(state.tournaments, payload.suspendedTournaments);
+      tournamentsAdapter.removeMany(
+        state.tournaments,
+        payload.suspendedTournaments
+      );
       seasonsAdapter.upsertMany(state.seasons, payload.seasons);
       seasonsAdapter.removeMany(state.seasons, payload.suspendedSeasons);
       roundsAdapter.upsertMany(state.rounds, payload.rounds);
@@ -140,5 +162,6 @@ export const {
   handleDiff,
   changeActiveSport,
   changeActiveTournament,
+  changeActiveFixture,
 } = offerSlice.actions;
 export const { reducer: offerReducer } = offerSlice;

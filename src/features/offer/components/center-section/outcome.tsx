@@ -8,11 +8,12 @@ import { Ticker } from "./ticker";
 
 interface IOutcomeProps {
   id: React.ReactText | null;
+  showName?: boolean;
 }
 
 const EmptyOutcome = () => <div className="fixture-outcome">-</div>;
 
-export const Outcome = ({ id }: IOutcomeProps) => {
+export const Outcome = ({ id, showName }: IOutcomeProps) => {
   const outcome = useSelector((state: RootState) =>
     selectOutcomeById(state, id || "")
   );
@@ -25,10 +26,12 @@ export const Outcome = ({ id }: IOutcomeProps) => {
     <div
       className={classnames("fixture-outcome selectable", {
         selected: !!outcome.selected,
+        "named-outcome": showName,
       })}
       onClick={clickHandler}
     >
-      {outcome.odds}
+      {showName && <span className="name">{outcome.name}</span>}
+      <span className="odds">{outcome.odds}</span>
       {!!outcome.trend ? (
         <Ticker trend={outcome.trend} price={outcome.odds} />
       ) : null}

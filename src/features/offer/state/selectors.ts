@@ -29,6 +29,7 @@ import {
 const selectSportState = ({ offer }: RootState) => offer.sports;
 const selectCategoryState = ({ offer }: RootState) => offer.categories;
 const selectTournamentState = ({ offer }: RootState) => offer.tournaments;
+const selectFixtureState = ({ offer }: RootState) => offer.fixtures;
 
 function generateActiveEntitySelectors<T>(
   selectState: (state: RootState) => EntityState<T>,
@@ -144,6 +145,14 @@ export const {
 } = selectorGenerator<IFixture>(
   ({ offer }: RootState) => offer.fixtures,
   fixturesAdapter
+);
+
+export const {
+  selectActiveId: selectActiveFixtureId,
+  selectActiveEntity: selectActiveFixture,
+} = generateActiveEntitySelectors<IFixture>(
+  selectFixtureState,
+  ({ offer }) => offer.activeFixture
 );
 
 export const selectTournamentSeasons = createSelector(

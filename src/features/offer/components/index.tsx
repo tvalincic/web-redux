@@ -25,7 +25,7 @@ export const Offer = () => {
   return (
     <section className="offer">
       <Sidebar />
-      <CenterSection />
+      <CenterSection handleDiff={onDiff} />
     </section>
   );
 };

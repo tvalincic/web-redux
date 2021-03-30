@@ -201,6 +201,14 @@
   padding-left: 8px;
 }
 
+.fixture {
+  cursor: pointer;
+}
+
+.fixture:hover {
+  background-color: #f0f1f3;
+}
+
 .line-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -261,6 +269,64 @@
 .fixture-type {
   text-align: center;
   padding: 2px;
+}
+
+section.fixture-details {
+  background-color: #fff;
+}
+
+.fixture-details .fixture-title {
+  font-size: 2em;
+  text-align: center;
+  padding: 20px;
+}
+
+.offer-line {
+  display: grid;
+  grid-template-columns: repeat(2, 50%);
+  border-bottom: 1px solid #c5cfd6;
+  align-items: center;
+  padding: 8px 12px;
+}
+
+.fixture-outcome.named-outcome {
+  display: inline-grid;
+  vertical-align: middle;
+  grid-template-columns: 40% 60%;
+  cursor: pointer;
+  border: 1px solid #d5d5d5;
+  overflow: hidden;
+  color: #474747;
+  min-width: 100px;
+  margin: 2px;
+}
+
+.outcomes {
+  text-align: right;
+}
+
+.named-outcome span.name {
+  padding: 0px 5px;
+  background-color: #fff;
+}
+
+.named-outcome span.odds {
+  background: #f0f1f3;
+  text-align: center;
+  padding-right: 1.5px;
+}
+
+.named-outcome.selectable:not(.selected):hover .odds {
+  background-color: #d3d8db;
+}
+
+.named-outcome.selected {
+  border-color: #ad101a;
+}
+
+.named-outcome.selected .odds {
+  background-color: #ad101a;
+  color: #fff;
 }
 
 @keyframes hideTrend {
