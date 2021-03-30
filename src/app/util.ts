@@ -9,6 +9,10 @@ export function filterOutFalsy<T>(v: T | null | undefined): v is T {
   return !!v;
 }
 
+export function joinStrings(delimiter: string, ...ids: string[]) {
+  return ids.join(delimiter);
+}
+
 export function selectorGenerator<T>(
   selectState: (state: RootState) => EntityState<T>,
   adapter: EntityAdapter<T>

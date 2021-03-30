@@ -1,5 +1,5 @@
 import createBetSlip, { IChange } from "@minus5/listic.lib";
-import { joinStrings } from "../../shared";
+import { joinStrings } from "../../../app/util";
 import { IOutcome, IFixture, IMarket, ILine } from "../../offer";
 import { IBetSlip, IBetSlipState } from "./model";
 const betSlipApi = createBetSlip();
