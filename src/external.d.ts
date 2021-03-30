@@ -1,3 +1,4 @@
+declare module "@minus5/legenda.lib/src/translate_factory";
 declare module "@minus5/foundation.lib" {
   interface IString {
     ToMoneyNumber: (num: string) => number;
@@ -164,4 +165,15 @@ declare module "@minus5/listic.lib" {
   }
   declare function createBetSlip(): IBetSlipApi;
   export = createBetSlip;
+}
+declare module "@minus5/amp-sdk" {
+  interface IAmp {
+    request: (uri: any, payload: any, ok: any, fail: any) => void;
+    setMeta: (meta: any) => void;
+    subscribe: <T>(key: string, handler: (data: T) => void) => void;
+    unSubscribe: <T>(key: string, handler: (data: T) => void) => void;
+    close: () => void;
+  }
+  declare function createAmp(config: any): IAmp;
+  export = createAmp;
 }
