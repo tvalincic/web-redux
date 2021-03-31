@@ -298,6 +298,10 @@ section.fixture-details {
   padding: 8px 12px;
 }
 
+.offer-line:first-child {
+  border-top: 1px solid #c5cfd6;
+}
+
 .fixture-outcome.named-outcome {
   display: inline-grid;
   vertical-align: middle;
@@ -330,6 +334,10 @@ section.fixture-details {
 
 .named-outcome.selected {
   border-color: #ad101a;
+}
+
+.named-outcome.selected .name {
+  color: black;
 }
 
 .named-outcome.selected .odds {
