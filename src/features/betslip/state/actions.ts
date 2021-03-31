@@ -168,6 +168,6 @@ export const syncSlipAfterDiff = createAsyncThunk<
     changed,
     deleted
   );
-  betSlip.change(changed, deleted, getState());
+  betSlip.change(changed, stopped, getState());
   return { currentBetSlip: betSlip.getCurrentBetSlip(), stopped, reactivated };
 });
