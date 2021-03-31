@@ -33,7 +33,14 @@ export function suspend<
 >(id: string, state: IOfferState, data: T) {
   return {
     sport() {
-      suspendEntity(id, state, data, "Sports", sportCategories, this.category);
+      suspendEntity(
+        id,
+        state,
+        data,
+        "Sports",
+        sportCategories,
+        this.category.bind(this)
+      );
     },
     category() {
       suspendEntity(
@@ -42,7 +49,7 @@ export function suspend<
         data,
         "Categories",
         categoryTournaments,
-        this.tournament
+        this.tournament.bind(this)
       );
     },
     tournament() {
@@ -52,26 +59,61 @@ export function suspend<
         data,
         "Tournaments",
         tournamentSeasons,
-        this.season
+        this.season.bind(this)
       );
     },
     season() {
-      suspendEntity(id, state, data, "Seasons", seasonRounds, this.round);
+      suspendEntity(
+        id,
+        state,
+        data,
+        "Seasons",
+        seasonRounds,
+        this.round.bind(this)
+      );
     },
     round() {
-      suspendEntity(id, state, data, "Rounds", roundFixtures, this.fixture);
+      suspendEntity(
+        id,
+        state,
+        data,
+        "Rounds",
+        roundFixtures,
+        this.fixture.bind(this)
+      );
     },
     fixture() {
       suspendEntity(id, state, data, "Fixtures");
     },
     offer() {
-      suspendEntity(id, state, data, "Offers", offerMarkets, this.market);
+      suspendEntity(
+        id,
+        state,
+        data,
+        "Offers",
+        offerMarkets,
+        this.market.bind(this)
+      );
     },
     market() {
-      suspendEntity(id, state, data, "Markets", marketLines, this.line);
+      suspendEntity(
+        id,
+        state,
+        data,
+        "Markets",
+        marketLines,
+        this.line.bind(this)
+      );
     },
     line() {
-      suspendEntity(id, state, data, "Lines", lineOutcomes, this.outcome);
+      suspendEntity(
+        id,
+        state,
+        data,
+        "Lines",
+        lineOutcomes,
+        this.outcome.bind(this)
+      );
     },
     outcome() {
       suspendEntity(id, state, data, "Outcomes");
