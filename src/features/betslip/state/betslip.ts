@@ -1,7 +1,8 @@
 import createBetSlip, { IChange } from "@minus5/listic.lib";
 import { joinStrings } from "../../../app/util";
-import { IOutcome, IFixture, IMarket, ILine } from "../../offer";
-import { IBetSlip, IBetSlipState } from "./model";
+import { IOutcome, IFixture, IMarket, ILine, IOfferState } from "../../offer";
+import { IBetSlip } from "./model";
+import { RootState } from "../../../app/store";
 const betSlipApi = createBetSlip();
 
 const TEMP_SOURCE_ID = 0;
@@ -66,11 +67,15 @@ function changeStake(stake: number) {
   return betSlipApi.ulog(stake);
 }
 
-function generateChange(outcome: IOutcome | string): IChange {
-  if (typeof outcome === "string") {
+function generateChange(
+  outcome: IOutcome | string,
+  stopped?: boolean
+): IChange {
+  const outcomeId = typeof outcome === "string" ? outcome : outcome.id;
+  if (typeof outcome === "string" || stopped) {
     return {
       izvorId: TEMP_SOURCE_ID,
-      tecajId: outcome,
+      tecajId: outcomeId,
       tipPromjene: "nijeUPonudi",
     };
   }
@@ -83,15 +88,24 @@ function generateChange(outcome: IOutcome | string): IChange {
   };
 }
 
-function change(changed: IOutcome[], deleted: string[], state: IBetSlipState) {
+function isStopped(outcome: IOutcome, state: IOfferState) {
+  const line = state.lines.entities[outcome.id];
+  const market = state.markets.entities[line?.market || ""];
+  const offer = state.offers.entities[market?.offer || ""];
+  if (!line || !market || !offer) return true;
+  return line.stopped || offer.stopped;
+}
+
+function change(changed: IOutcome[], deleted: string[], state: RootState) {
   const changes: IChange[] = [];
+  const { betSlip, offer } = state;
   changed.forEach((change) => {
-    if (state.entities[change.id]) {
-      changes.push(generateChange(change));
+    if (betSlip.entities[change.id]) {
+      changes.push(generateChange(change, isStopped(change, offer)));
     }
   });
   deleted.forEach((id) => {
-    if (state.entities[id]) {
+    if (betSlip.entities[id]) {
       changes.push(generateChange(id));
     }
   });

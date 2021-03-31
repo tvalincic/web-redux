@@ -23,6 +23,7 @@ export interface IBetSlipOutcome {
   offer: string;
   market: string;
   line: string;
+  stopped: boolean;
 }
 
 export type IBetSlipState = EntityState<IBetSlipOutcome> & IBetSlip;

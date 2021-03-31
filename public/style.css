@@ -266,6 +266,15 @@
   border-left: 1px solid #dce2e6;
 }
 
+.fixture-outcome.stopped {
+  color: rgba(0, 0, 0, 0.2);
+}
+
+.fixture-outcome.stopped:hover {
+  cursor: initial;
+  background-color: #f0f1f3;
+}
+
 .fixture-type {
   text-align: center;
   padding: 2px;
@@ -296,7 +305,6 @@ section.fixture-details {
   cursor: pointer;
   border: 1px solid #d5d5d5;
   overflow: hidden;
-  color: #474747;
   min-width: 100px;
   margin: 2px;
 }

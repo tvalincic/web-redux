@@ -45,6 +45,9 @@ export const Outcome = ({ id }: IOutcomeProps) => {
       <div className="outcome-footer">
         <div className="footer-left">
           <span className="time">{constructDate(fixture.startsAt)}</span>
+          {outcome?.stopped && (
+            <strong style={{ color: "red" }}>STOPPED</strong>
+          )}
         </div>
         <div className="footer-right">
           <span className="type">{outcomeEntity.name}</span>

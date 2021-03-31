@@ -1,7 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { betSlip } from "./betslip";
 import { RootState, AppDispatch } from "../../../app/store";
-import { IFixture, IMarket, ILine, IOutcome, IOffer } from "../../offer";
+import {
+  IFixture,
+  IMarket,
+  ILine,
+  IOutcome,
+  IOffer,
+  IOfferState,
+} from "../../offer";
 import { IBetSlip, IBetSlipOutcome, IBetSlipState } from "./model";
 
 export const changeStake = createAsyncThunk<
@@ -44,7 +51,7 @@ function addOutcome(
   market: IMarket,
   line: ILine,
   outcome: IOutcome
-) {
+): IToggleOutcome {
   const ret = betSlip.add(fixture, market, line, outcome);
   if (!ret.ok) return { ok: false };
   return {
@@ -54,6 +61,7 @@ function addOutcome(
       market: market.id,
       line: line.id,
       id: outcome.id,
+      stopped: offer.stopped || line.stopped,
     },
     zamjena: !!ret.zamjena,
     removed: ret.removed ? ret.removed.map((outcome) => outcome.tecajId) : [],
@@ -61,7 +69,7 @@ function addOutcome(
   };
 }
 
-function removeOutcome(outcome: IOutcome) {
+function removeOutcome(outcome: IOutcome): IToggleOutcome {
   const ret = betSlip.remove(outcome);
   if (!ret.ok) return { ok: false };
   return {
@@ -70,14 +78,17 @@ function removeOutcome(outcome: IOutcome) {
   };
 }
 
-export interface IAddOutcomeReturn extends IBetSlip {
+interface IToggleOutcome {
   newOutcome?: IBetSlipOutcome;
   zamjena?: boolean;
   removed?: string[];
+  ok: boolean;
 }
 
+export type IToggleOutcomeReturn = IBetSlip & IToggleOutcome;
+
 export const toggleOutcome = createAsyncThunk<
-  IAddOutcomeReturn,
+  IToggleOutcomeReturn,
   string,
   {
     dispatch: AppDispatch;
@@ -105,14 +116,58 @@ interface IChangedOutcomesPayload {
   deleted: string[];
 }
 
+function isStopped(outcome: IOutcome | undefined, state: IOfferState) {
+  if (!outcome) return true;
+  const line = state.lines.entities[outcome.id];
+  const market = state.markets.entities[line?.market || ""];
+  const offer = state.offers.entities[market?.offer || ""];
+  if (!line || !market || !offer) return true;
+  return line.stopped || offer.stopped;
+}
+
+function getOutcomesToSync(
+  state: RootState,
+  changed: IOutcome[],
+  deleted: string[]
+) {
+  const { betSlip: betSlipState, offer } = state;
+  const stopped: string[] = [];
+  const reactivated: string[] = [];
+  if (!betSlipState.ids.length) return { stopped, reactivated };
+  changed.forEach((outcome) => {
+    const outcomeFromSlip = betSlipState.entities[outcome.id];
+    if (!outcomeFromSlip) return;
+    const outcomeStopped = isStopped(outcome, offer);
+    if (outcomeStopped !== outcomeFromSlip.stopped) {
+      const arr = outcomeStopped ? stopped : reactivated;
+      arr.push(outcome.id);
+    }
+  });
+  deleted.forEach((outcome) => {
+    if (betSlipState.entities[outcome]) stopped.push(outcome);
+  });
+  return { stopped, reactivated };
+}
+
+interface ISyncSlipAfterDiffReturn {
+  currentBetSlip: IBetSlip;
+  stopped: string[];
+  reactivated: string[];
+}
+
 export const syncSlipAfterDiff = createAsyncThunk<
-  ReturnType<typeof betSlip.getCurrentBetSlip>,
+  ISyncSlipAfterDiffReturn,
   IChangedOutcomesPayload,
   {
     dispatch: AppDispatch;
     state: RootState;
   }
 >("slip/syncSlipApi", ({ changed, deleted }, { getState }) => {
-  betSlip.change(changed, deleted, getState().betSlip);
-  return betSlip.getCurrentBetSlip();
+  const { stopped, reactivated } = getOutcomesToSync(
+    getState(),
+    changed,
+    deleted
+  );
+  betSlip.change(changed, deleted, getState());
+  return { currentBetSlip: betSlip.getCurrentBetSlip(), stopped, reactivated };
 });

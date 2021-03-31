@@ -32,7 +32,7 @@ export const FixtureDetails = ({ id, handleDiff }: IFixtureDetails) => {
       </div>
       <div className="markets">
         {offer.markets.map((market) => (
-          <Market id={market} key={market} />
+          <Market id={market} key={market} offerStopped={offer.stopped} />
         ))}
       </div>
     </section>

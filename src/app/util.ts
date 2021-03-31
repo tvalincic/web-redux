@@ -52,3 +52,10 @@ export function selectorGenerator<T>(
     selectEntitiesByGroupOfIds,
   };
 }
+
+export function constructUpdate<T extends {}>(id: string, changes: T) {
+  return {
+    id,
+    changes,
+  };
+}

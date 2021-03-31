@@ -8,25 +8,35 @@ import { Ticker } from "./ticker";
 
 interface IOutcomeProps {
   id: React.ReactText | null;
+  stopped: boolean;
   showName?: boolean;
 }
 
-const EmptyOutcome = () => <div className="fixture-outcome">-</div>;
+interface IEmptyOutcomeProps {
+  stopped: boolean;
+}
 
-export const Outcome = ({ id, showName }: IOutcomeProps) => {
+const EmptyOutcome = ({ stopped }: IEmptyOutcomeProps) => (
+  <div className={classnames("fixture-outcome", { stopped })}>-</div>
+);
+
+export const Outcome = ({ id, showName, stopped }: IOutcomeProps) => {
   const outcome = useSelector((state: RootState) =>
     selectOutcomeById(state, id || "")
   );
   const dispatch = useDispatch();
-  if (!outcome) return <EmptyOutcome />;
+  if (!outcome) return <EmptyOutcome stopped={stopped} />;
   const clickHandler = () => {
+    if (stopped) return;
     dispatch(toggleOutcome(outcome.id));
   };
   return (
     <div
-      className={classnames("fixture-outcome selectable", {
+      className={classnames("fixture-outcome", {
+        selectable: !stopped,
         selected: !!outcome.selected,
         "named-outcome": showName,
+        stopped,
       })}
       onClick={clickHandler}
     >

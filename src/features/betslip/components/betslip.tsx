@@ -9,7 +9,7 @@ export const BetSlip = () => {
   return (
     <section className="betslip">
       <div className="betslip-header">Listić</div>
-      <div className="outcomes">
+      <div className="betslip-outcomes">
         {outcomeIds.map((outcome) => (
           <Outcome id={outcome} key={outcome} />
         ))}
