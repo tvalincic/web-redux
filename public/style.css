@@ -298,7 +298,7 @@ section.fixture-details {
   padding: 8px 12px;
 }
 
-.offer-line:first-child {
+.market:first-child .offer-line {
   border-top: 1px solid #c5cfd6;
 }
 
