@@ -39,7 +39,7 @@ export const Outcome = ({ id }: IOutcomeProps) => {
     <div className="outcome">
       <div className="outcome-header">
         <div className="title">
-          {away.name} - {home.name}
+          {home.name} - {away.name}
         </div>
       </div>
       <div className="outcome-footer">
