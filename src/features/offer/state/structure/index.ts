@@ -377,10 +377,13 @@ function constructScores(
     stateKey: stateEntity.score,
     onSuspend: (id) => suspend(id, state, data).score(),
     idCreator: (id) => id,
-    createEntity(offer) {
-      const fixture = fixtures[offer.id];
+    createEntity(score) {
+      const fixture = fixtures[score.id];
       if (!fixture) return null;
-      return { ...offer, fixture: fixture?.id || "" };
+      return {
+        ...JSON.parse(JSON.stringify(score)),
+        fixture: fixture?.id || "",
+      };
     },
   });
   return data;
