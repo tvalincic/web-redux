@@ -195,7 +195,7 @@
 
 .fixture-grid {
   display: grid;
-  grid-template-columns: auto 150px;
+  grid-template-columns: auto 100px 150px;
   border-bottom: 1px solid #c5cfd6;
   align-items: center;
   padding-left: 8px;
@@ -280,6 +280,30 @@
   padding: 2px;
 }
 
+.score {
+  text-align: center;
+}
+.fixture .score-period,
+.fixture .fixture-name {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.score-period {
+  width: 40px;
+  font-size: 11px;
+}
+
+.score-entity {
+  background-color: #d5d5d5;
+  font-size: 11px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  animation: changeScoreColor linear 4s forwards;
+  /* animation-delay: 4s;
+  animation-iteration-count: 1; */
+}
+
 section.fixture-details {
   background-color: #fff;
 }
@@ -351,5 +375,20 @@ section.fixture-details {
   }
   100% {
     opacity: 0;
+  }
+}
+
+@keyframes changeScoreColor {
+  0% {
+    background-color: #f2b300;
+    color: #fff;
+  }
+  99% {
+    background-color: #f2b300;
+    color: #fff;
+  }
+  100% {
+    background-color: #d5d5d5;
+    color: black;
   }
 }

@@ -10,6 +10,7 @@ import {
   marketsAdapter,
   linesAdapter,
   outcomesAdapter,
+  scoresAdapter,
 } from "./slice";
 import { RootState } from "../../../app/store";
 import { IMap, selectorGenerator } from "../../../app/util";
@@ -24,6 +25,7 @@ import {
   IMarket,
   ILine,
   IOutcome,
+  IScore,
 } from "./model";
 
 const selectSportState = ({ offer }: RootState) => offer.sports;
@@ -256,3 +258,9 @@ export const selectStructuredLineOutcomeIds = createSelector(
     }, {});
   }
 );
+
+export const {
+  selectAll: selectScores,
+  selectById: selectScoreById,
+  selectIds: selectScoreIds,
+} = selectorGenerator<IScore>(({ offer }) => offer.scores, scoresAdapter);

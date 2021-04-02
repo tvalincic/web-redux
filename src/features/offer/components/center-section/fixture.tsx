@@ -5,10 +5,12 @@ import {
   selectFixtureById,
   selectMainFixtureMarketId,
   selectOfferById,
+  selectScoreById,
 } from "../../state/selectors";
 import { RootState } from "../../../../app/store";
 import { Market } from "./market";
 import { changeActiveFixture } from "../../state/slice";
+import { Score } from "./score";
 
 interface IFixtureProps {
   id: React.ReactText;
@@ -19,6 +21,7 @@ export const Fixture = ({ id }: IFixtureProps) => {
     selectFixtureById(state, id)
   );
   const offer = useSelector((state: RootState) => selectOfferById(state, id));
+  const score = useSelector((state: RootState) => selectScoreById(state, id));
   const mainMarket = useSelector((state: RootState) =>
     selectMainFixtureMarketId(state, id)
   );
@@ -37,9 +40,15 @@ export const Fixture = ({ id }: IFixtureProps) => {
       key={fixture.id}
     >
       <div className="fixture-title" onClick={clickHandler}>
-        {fixture.home.name} - {fixture.away.name}
+        <span className="score-period">{score?.progress}</span>
+        <span className="fixture-name">
+          {fixture.home.name} - {fixture.away.name}
+        </span>
       </div>
-      {!!mainMarket && <Market id={mainMarket} stoppedOffer={!!offer?.stopped} />}
+      <Score id={id} />
+      {!!mainMarket && (
+        <Market id={mainMarket} stoppedOffer={!!offer?.stopped} />
+      )}
     </div>
   );
 };

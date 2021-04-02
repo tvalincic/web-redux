@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import classnames from "classnames";
+import { useTicker } from "./useTicker";
 
 interface ITickerProps {
   trend: number;
@@ -7,18 +8,8 @@ interface ITickerProps {
 }
 
 export const Ticker = ({ trend, price }: ITickerProps) => {
-  const [ticker, setTicker] = useState(true);
-
-  useEffect(() => {
-    setTicker(false);
-  }, [price]);
-
-  useEffect(() => {
-    setTicker(true);
-  }, [ticker]);
-
+  const ticker = useTicker(price);
   if (!ticker) return null;
-
   return (
     <div
       className={classnames("ticker", {
